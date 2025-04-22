@@ -1,0 +1,97 @@
+version: '3.7'
+
+services:
+  config-server:
+    container_name: config-server
+    image: config-server
+    restart: on-failure
+    environment:
+      - SPRING_PROFILES_ACTIVE=default,native
+    ports:
+      - "8887:8888"
+    networks:
+      - network-main
+
+  eureka-server:
+    container_name: eureka-server
+    image: eureka-server
+    restart: on-failure
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=default,docker
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+    depends_on:
+      config-server:
+        condition: service_started
+    networks:
+      - network-main
+
+  ticket-service:
+    container_name: ticket-service
+    image: ticket-service
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=default,docker
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+    depends_on:
+      eureka-server:
+        condition: service_started
+    networks:
+      - network-main
+
+  tour-service:
+    container_name: tour-service
+    image: tour-service
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=default,docker
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+    depends_on:
+      eureka-server:
+        condition: service_started
+    networks:
+      - network-main
+
+  api-gateway:
+    container_name: api-gateway
+    image: api-gateway
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=default,docker
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+    depends_on:
+      eureka-server:
+        condition: service_started
+    ports:
+      - "8765:8765"
+    networks:
+      - network-main
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    volumes:
+      - ../prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9094:9090"
+    networks:
+      - network-main
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    restart: on-failure
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      prometheus:
+        condition: service_started
+    ports:
+      - "3004:3000"
+    networks:
+      - network-main
+
+networks:
+  network-main:
