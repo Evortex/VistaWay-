@@ -12,8 +12,8 @@ import java.io.Serializable;
 @RedisHash("tour")
 public class Tour implements Serializable {
         @Id
-        String id;
-        String tourName;
-        String contactName;
-        String contactPhone;
+        private String id;
+        private String tourName;
+        private String contactName;
+        private String contactPhone;
 }

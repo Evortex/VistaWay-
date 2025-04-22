@@ -5,5 +5,5 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TourRedisRepository extends CrudRepository<Tour,String> {
+public interface TourRedisRepository extends CrudRepository<Tour, String> {
 }
