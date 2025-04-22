@@ -53,4 +53,4 @@ resilience4j:
 
 
 topic:
-  send-tour: ${TOPIC_SEND_TOUR:send-tour-event}
+  send-tour: send-tour-event
