@@ -1,0 +1,61 @@
+# allow api gateway to use eureka for define MS
+# Spring Cloud Gateway будет автоматически обращаться к службе Eureka
+# и определять местоположение вызываемой службы по ее идентификатору.
+# Независимо от lower-case.
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+
+# Spring Cloud Gateway Spring Cloud Gateway может выполнять маршрутизацию автоматически,
+# используя идентификаторы служб
+      routes:
+        - id: ticket-service
+          uri: lb://ticket-service
+          #predicates: Path=/**
+          predicates:
+            - Path=/main/test
+            - Method=GET
+
+        - id: circuitBreaker-ticket-service
+          uri: lb://ticket-service
+          #predicates: Path=/**
+          predicates:
+            - Path=/api/v1/availableTickets/{tourId}
+            - Method=GET
+
+        - id: redis-ticket-service
+          uri: lb://ticket-service
+          #predicates: Path=/**
+          predicates:
+            - Path=/api/v1/availableTicketsWithRedis/{tourId}
+            - Method=GET
+
+        - id: tour-service
+          uri: lb://tour-service
+          predicates:
+            - Path=/new/name
+#            - Path=/**
+            - Method=GET
+
+        - id: saga-tour-service
+          uri: lb://tour-service
+          predicates:
+            - Path=/api/v1/tours
+            #- Path=/**
+            - Method=POST
+
+        - id: feign-tour-service
+          uri: lb://tour-service
+          predicates:
+            - Path=/new/tour/{tourId}
+            #- Path=/**
+            - Method=GET
+
+#На всякий случай напоминание – если у вас что-то не срабатывает во время изучения курса или не запускается –
+# выставляйте максимально подробный уровень логирования для пакета, иначе можете не увидеть ошибку.
+#Например, чтобы видеть все проблемы по безопасности (в том числе при вызове микросервисов)
+#logging.level.org.springframework.security: trace
