@@ -1,10 +1,20 @@
-FROM gradle:8.10.2-jdk17
+FROM gradle:8.1.0-jdk17 AS build
 
-WORKDIR /app/config-server
-COPY src ./src
+WORKDIR /app
+
 COPY build.gradle settings.gradle ./
+COPY gradle ./gradle
+COPY gradlew ./
+RUN ./gradlew dependencies
 
-RUN gradle clean bootJar -i --stacktrace
+COPY src ./src
+
+RUN ./gradlew clean bootJar -i --stacktrace
+
+FROM eclipse-temurin:17-jdk
+
+WORKDIR /app
+COPY --from=build /app/build/libs/*.jar app.jar
 
 EXPOSE 8888
-ENTRYPOINT ["java", "-jar", "/app/config-server/build/libs/config-server-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

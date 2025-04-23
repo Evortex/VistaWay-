@@ -1,10 +1,10 @@
-FROM maven:3.8.6-openjdk-17 AS build
+FROM gradle:8.10.2-jdk17 AS build
 
 WORKDIR /app/ticket-service
 
-COPY pom.xml .
+COPY build.gradle settings.gradle ./
 COPY src ./src
 
-RUN mvn clean package -DskipTests
+RUN gradle clean build -x test --no-daemon
 
-ENTRYPOINT ["java", "-jar", "/app/ticket-service/target/ticket-service-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "/app/ticket-service/build/libs/ticket-service-0.0.1-SNAPSHOT.jar"]
