@@ -4,7 +4,7 @@ services:
   config-server:
     container_name: config-server
     build:
-      context: ./config-server
+      context: ../../config-server
     image: config-server
     restart: on-failure
     environment:
@@ -17,7 +17,7 @@ services:
   eureka-server:
     container_name: eureka-server
     build:
-      context: ./eureka-server
+      context: ../../eureka-server
     image: eureka-server
     restart: on-failure
     ports:
@@ -34,7 +34,7 @@ services:
   ticket-service:
     container_name: ticket-service
     build:
-      context: ./ticket-service
+      context: ../../ticket-service
     image: ticket-service
     restart: always
     environment:
@@ -49,7 +49,7 @@ services:
   tour-service:
     container_name: tour-service
     build:
-      context: ./tour-service
+      context: ../../tour-service
     image: tour-service
     restart: always
     environment:
@@ -64,7 +64,7 @@ services:
   api-gateway:
     container_name: api-gateway
     build:
-      context: ./api-gateway
+      context: ../../api-gateway
     image: api-gateway
     restart: always
     environment:
@@ -82,7 +82,7 @@ services:
     container_name: prometheus
     image: prom/prometheus
     volumes:
-      - ../prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ../../prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9094:9090"
     networks:
